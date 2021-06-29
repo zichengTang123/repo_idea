@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.lagou.dao.RoleMapper">
+
+    <select id="findAllRole" parameterType="com.lagou.domain.Role" resultType="com.lagou.domain.Role">
+        select * from roles
+        <where>
+            <if test="name != null and name != ''">
+                name = #{name}
+            </if>
+        </where>
+    </select>
+
+    <!--根据Id删除角色对应的menu-->
+    <delete id="deleteMenuByRoleId" parameterType="int">
+        DELETE FROM role_menu_relation WHERE role_id = #{roleId};
+    </delete>
+
+    <insert id="insertMenu" parameterType="com.lagou.domain.Role_menu_relation">
+        insert into role_menu_relation values(null,#{menuId},#{roleId},
+          #{createdTime},#{updatedTime},#{createdBy},#{updatedby})
+    </insert>
+
+    <delete id="deleteRoleById" parameterType="int">
+        delete from roles where id = #{roleId}
+    </delete>
+
+    <resultMap id="ResourceResourceCategoryVOMap" type="com.lagou.domain.ResourceResourceCategoryVO">
+        <id property="categoryId" column="categoryId"/>
+        <result property="categoryName" column="categoryName"/>
+        <result property="resource.id" column="id"/>
+        <result property="resource.name" column="name"/>
+        <result property="resource.url" column="url"/>
+        <result property="resource.categoryId" column="category_id"/>
+        <result property="resource.description" column="description"/>
+        <result property="resource.createdTime" column="created_time"/>
+        <result property="resource.updatedTime" column="updated_time"/>
+        <result property="resource.createdBy" column="created_by"/>
+        <result property="resource.updatedBy" column="updated_by"/>
+    </resultMap>
+
+    <!--获取当前角色拥有的 资源信息-->
+    <select id="findResourceListByRoleId" parameterType="int" resultMap="ResourceResourceCategoryVOMap">
+        select r.*, rc.name categoryName, rc.id categoryId
+        from role_resource_relation rr left join resource r on rr.`resource_id` = r.`id`
+                                       left join resource_category rc on r.`category_id` = rc.`id`
+        where rr.`role_id` = #{id};
+    </select>
+
+    <!--清空role，resource的对应关系-->
+    <delete id="deleteRoleResourceRelationById" parameterType="int">
+        delete from role_resource_relation where role_id = #{id}
+    </delete>
+
+    <!--重新插入role，resource的对应关系-->
+    <insert id="insertRoleResourceRelation" parameterType="com.lagou.domain.RoleResourceRelation">
+            insert into role_resource_relation values (null, #{resource_id}, #{role_id},
+               #{created_time}, #{updated_time}, #{created_by}, #{updated_by})
+    </insert>
+
+</mapper>

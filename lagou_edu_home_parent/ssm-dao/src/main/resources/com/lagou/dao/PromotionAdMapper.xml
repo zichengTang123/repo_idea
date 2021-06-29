@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.lagou.dao.PromotionAdMapper">
+    <resultMap id="ad_space" type="com.lagou.domain.PromotionAd">
+
+        <id column="id" property="id"></id>
+        <result column="name" property="name"></result>
+        <result column="spaceId" property="spaceId"></result>
+        <result column="keyword" property="keyword"></result>
+        <result column="htmlContent" property="htmlContent"></result>
+        <result column="text" property="text"></result>
+        <result column="link" property="link"></result>
+        <result column="startTime" property="startTime"></result>
+        <result column="endTime" property="endTime"></result>
+        <result column="createTime" property="createTime"></result>
+        <result column="updateTime" property="updateTime"></result>
+        <result column="status" property="status"></result>
+        <result column="priority" property="priority"></result>
+        <result column="img" property="img"></result>
+
+        <association property="promotionSpace" javaType="com.lagou.domain.PromotionSpace" select="com.lagou.dao.PromotionSpaceMapper.findPromotionSpaceById" column="spaceId"></association>
+
+    </resultMap>
+
+    <select id="findAllPromotionAdByPage" resultMap="ad_space">
+        select * from promotion_ad
+    </select>
+
+    <insert id="savePromotionAd" parameterType="com.lagou.domain.PromotionAd">
+        insert into promotion_ad values(null, #{name}, #{spaceId}, #{keyword}, #{htmlContent}, #{text}, #{link},
+          #{startTime}, #{endTime}, #{createTime}, #{updateTime}, #{status}, #{priority}, #{img})
+    </insert>
+
+    <select id="findPromotionAdById" parameterType="int" resultType="com.lagou.domain.PromotionAd">
+        select * from promotion_ad where id = #{id}
+    </select>
+
+    <update id="updatePromotionAd" parameterType="com.lagou.domain.PromotionAd">
+        update promotion_ad set name = #{name}, spaceId=#{spaceId},
+            text=#{text}, link=#{link},startTime=#{startTime}, endTime=#{endTime}, createTime=#{createTime},
+            updateTime=#{updateTime}, status=#{status}, priority=#{priority}, img= #{img}
+            where id = #{id}
+    </update>
+
+    <update id="updatePromotionAdStatus" parameterType="com.lagou.domain.PromotionAd">
+        update promotion_ad set status = #{status}, updateTime=#{updateTime} where id = #{id}
+    </update>
+
+
+</mapper>
